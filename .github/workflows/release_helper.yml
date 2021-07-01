@@ -1,4 +1,4 @@
-name: Release Main
+name: Release Helper
 on:
   push:
     branches:
@@ -59,7 +59,7 @@ jobs:
       - name: Upload Release Asset
         uses: AButler/upload-release-assets@v2.0
         with:
-          files: 'www-covidcast-*.tgz'
+          files: 'www-covidcast-classic-*.tgz'
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           release-tag: ${{ needs.create_release.outputs.tag_name }}
 
@@ -87,7 +87,7 @@ jobs:
       - run: npm ci
       - name: Update to Latest Release
         run: |
-          npm install https://github.com/cmu-delphi/www-covidcast-classic/releases/download/${{ needs.create_release.outputs.tag_name }}/www-covidcast-${{ needs.create_release.outputs.version }}.tgz
+          npm install https://github.com/cmu-delphi/www-covidcast-classic/releases/download/${{ needs.create_release.outputs.tag_name }}/www-covidcast-classic-${{ needs.create_release.outputs.version }}.tgz
       - name: Create pull request to update COVIDcast Classic
         uses: peter-evans/create-pull-request@v3
         with:
