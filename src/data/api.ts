@@ -120,14 +120,3 @@ export function callMetaAPI<T = Record<string, unknown>>(
     body: data,
   }).then((d) => d.json());
 }
-
-/**
- *
- * @returns
- */
-export function callSignalAPI<T = Record<string, unknown>>(): Promise<EpiDataResponse<T>> {
-  const url = new URL(ENDPOINT);
-  url.searchParams.set('source', 'signal_dashboard_status');
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  return fetch(url.toString(), fetchOptions).then((d) => d.json());
-}

@@ -3,7 +3,6 @@ import { formatAPITime } from '../data/utils';
 import descriptions from './descriptions.generated.json';
 import { formatRawValue, formatValue, formatPercentage } from '../formats';
 import { interpolateBuPu, interpolateYlGnBu, interpolateYlOrRd } from 'd3-scale-chromatic';
-import { getDataSource } from './dataSourceLookup';
 import type { RegionLevel } from '../data/regions';
 // import { generateMockSignal, generateMockMeta } from '../data/mock';
 
@@ -80,13 +79,11 @@ export interface Sensor {
 
   readonly name: string; // signal name
   readonly unit: string;
-  readonly dataSourceName: string;
   readonly type: 'public' | 'early' | 'late';
   readonly levels: readonly RegionLevel[];
   readonly description?: string; // HTML long text description
   readonly signalTooltip: string; // short text description
   readonly colorScale: (this: void, v: number) => string;
-  readonly vegaColorScale: string;
 
   readonly links: readonly string[]; // more information links
   readonly credits?: string; // credit text
@@ -120,11 +117,6 @@ const colorScales = {
   good: interpolateYlGnBu,
   bad: interpolateYlOrRd,
   neutral: interpolateBuPu,
-};
-const vegaColorScales = {
-  good: 'yellowgreenblue',
-  bad: 'yelloworangered',
-  neutral: 'bluepurple',
 };
 
 export function ensureSensorStructure(
@@ -161,12 +153,10 @@ export function ensureSensorStructure(
   const full = Object.assign(sensor, {
     key,
     type: 'public',
-    dataSourceName: getDataSource(sensor),
     levels: ['state'],
     description: sensor.signalTooltip || 'No description available',
     signalTooltip: guessedSignalTooltip,
     colorScale: colorScales[highValuesAre],
-    vegaColorScale: vegaColorScales[highValuesAre],
 
     links: [],
     credits: 'We are happy for you to use this data in products and publications.',
@@ -294,7 +284,7 @@ export function extendSensorEntry(
   const isCasesOrDeath = isCasesSignal(key) || isDeathSignal(key);
   const isCount = isCountSignal(key);
 
-  const mapTitle = (sensorEntry.mapTitleText as unknown) as {
+  const mapTitle = sensorEntry.mapTitleText as unknown as {
     incidenceCumulative: string;
     ratioCumulative: string;
     incidence: string;
@@ -303,7 +293,7 @@ export function extendSensorEntry(
 
   const full: Sensor & RegularOldSensor = Object.assign(ensureSensorStructure(sensorEntry), {
     key,
-    tooltipText: sensorEntry.tooltipText || ((mapTitle as unknown) as string),
+    tooltipText: sensorEntry.tooltipText || (mapTitle as unknown as string),
     isCount,
     getType: (options: CasesOrDeathOptions) => getType(sensorEntry, options),
     isCasesOrDeath: false as const,
@@ -313,7 +303,7 @@ export function extendSensorEntry(
   if (!isCasesOrDeath) {
     return full;
   }
-  const casesOrDeath = (full as unknown) as Sensor & CasesOrDeathOldSensor;
+  const casesOrDeath = full as unknown as Sensor & CasesOrDeathOldSensor;
   casesOrDeath.isCasesOrDeath = true;
   casesOrDeath.casesOrDeathSensors = {} as CasesOrDeathOldSensor['casesOrDeathSensors'];
   casesOrDeath.mapTitleText =
@@ -368,7 +358,7 @@ export function extendSensorEntry(
  */
 export const regularSignalMetaDataGeoTypeCandidates = ['county', 'msa'];
 
-const defaultSensors = (descriptions as unknown) as (Partial<SensorEntry> & {
+const defaultSensors = descriptions as unknown as (Partial<SensorEntry> & {
   name: string;
   id: string;
   signal: string;

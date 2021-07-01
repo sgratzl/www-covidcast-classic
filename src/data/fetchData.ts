@@ -2,8 +2,7 @@ import { callAPIEndPoint, EpiDataResponse } from './api';
 import { timeDay } from 'd3-time';
 import { parseAPITime, formatAPITime, combineSignals } from './utils';
 import { EpiDataCasesOrDeathValues, EPIDATA_CASES_OR_DEATH_VALUES } from '../stores/constants';
-import { getInfoByName } from './regions';
-import type { RegionInfo, RegionLevel } from './regions';
+import type { RegionLevel } from './regions';
 
 export interface DataSensor {
   id: string;
@@ -99,7 +98,7 @@ function parseMultipleTreeData(
   if (d.result < 0 || d.message.includes('no results')) {
     return [];
   }
-  const tree = ((d.epidata || []) as unknown) as [] | [Record<string, EpiDataRow[]>];
+  const tree = (d.epidata || []) as unknown as [] | [Record<string, EpiDataRow[]>];
   if (tree.length === 0 || (Array.isArray(tree[0]) && tree[0].length === 0)) {
     return parseData({ ...d, epidata: [] }, mixinData, factor);
   }
@@ -225,34 +224,6 @@ export function fetchData(
   }
 }
 
-export interface NationSummarySamples {
-  minDate: Date | null;
-  maxDate: Date | null;
-  totalSampleSize: number;
-  averageSampleSize: number;
-}
-
-export async function fetchSampleSizesNationSummary(dataSensor: DataSensor): Promise<NationSummarySamples> {
-  const data = await callAPIEndPoint<EpiDataRow>(
-    null,
-    dataSensor.id,
-    dataSensor.signal,
-    'nation',
-    `${formatAPITime(START_TIME_RANGE)}-${formatAPITime(END_TIME_RANGE)}`,
-    'us',
-    ['time_value', 'sample_size'],
-  ).then((r) => parseData(r, {}));
-
-  const sum = data.reduce((acc, v) => (v.sample_size != null ? acc + v.sample_size : acc), 0);
-  return {
-    // parse data produces sorted by date
-    minDate: data.length > 0 ? data[0].date_value : null,
-    maxDate: data.length > 0 ? data[data.length - 1].date_value : null,
-    totalSampleSize: sum,
-    averageSampleSize: sum / data.length,
-  };
-}
-
 export function fetchRegionSlice(
   dataSensor: DataSensor,
   level: RegionLevel,
@@ -275,7 +246,7 @@ function createCopy<T extends EpiDataRow = EpiDataRow>(row: T, date: Date, dataS
   });
   if (
     (dataSensor != null && dataSensor.isCasesOrDeath) ||
-    ((row as unknown) as EpiDataCasesOrDeathValues)[EPIDATA_CASES_OR_DEATH_VALUES[0]] !== undefined
+    (row as unknown as EpiDataCasesOrDeathValues)[EPIDATA_CASES_OR_DEATH_VALUES[0]] !== undefined
   ) {
     EPIDATA_CASES_OR_DEATH_VALUES.forEach((key) => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
@@ -353,70 +324,4 @@ export function addMissing<T extends EpiDataRow = EpiDataRow>(rows: T[], dataSen
     return createCopy(template, date, dataSensor);
   });
   return imputedRows;
-}
-
-export function addNameInfos(rows: EpiDataRow[]): (EpiDataRow & RegionInfo)[] {
-  for (const row of rows) {
-    Object.assign(row, getInfoByName(row.geo_value, row.geo_type));
-  }
-  return rows as (EpiDataRow & RegionInfo)[];
-}
-
-function avg(
-  rows: (EpiDataRow & Partial<EpiDataCasesOrDeathValues>)[],
-  field: 'value' | 'stderr' | 'sample_size' | keyof EpiDataCasesOrDeathValues,
-) {
-  let valid = 0;
-  const sum = rows.reduce((acc, v) => {
-    const vi = v[field];
-    if (vi == null || Number.isNaN(vi)) {
-      return acc;
-    }
-    valid++;
-    return acc + vi;
-  }, 0);
-  if (sum == null || Number.isNaN(sum) || valid === 0) {
-    return null;
-  }
-  return sum / valid;
-}
-/**
- * group by date and averages its values
- */
-export function averageByDate(
-  rows: EpiDataRow[],
-  dataSensor: DataSensor,
-  mixin: Partial<EpiDataRow> = {},
-): EpiDataRow[] {
-  // average by date
-  const byDate = new Map<number | string, EpiDataRow[]>();
-  for (const row of rows) {
-    const key = row.time_value;
-    if (byDate.has(key)) {
-      byDate.get(key)?.push(row);
-    } else {
-      byDate.set(key, [row]);
-    }
-  }
-  return Array.from(byDate.values())
-    .map((rows) => {
-      const r: EpiDataRow = {
-        ...rows[0],
-        ...mixin,
-        value: avg(rows, 'value')!,
-        stderr: avg(rows, 'stderr')!,
-        sample_size: avg(rows, 'sample_size')!,
-      };
-      if (
-        (dataSensor != null && dataSensor.isCasesOrDeath) ||
-        ((rows[0] as unknown) as EpiDataCasesOrDeathValues)[EPIDATA_CASES_OR_DEATH_VALUES[0]] !== undefined
-      ) {
-        EPIDATA_CASES_OR_DEATH_VALUES.forEach((key) => {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
-          (r as any)[key] = avg(rows, key);
-        });
-      }
-      return r;
-    })
-    .sort((a, b) => a.time_value - b.time_value);
 }
