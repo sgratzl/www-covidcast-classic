@@ -87,19 +87,19 @@ jobs:
       - run: npm ci
       - name: Update to Latest Release
         run: |
-          npm install https://github.com/cmu-delphi/www-covidcast/releases/download/${{ needs.create_release.outputs.tag_name }}/www-covidcast-${{ needs.create_release.outputs.version }}.tgz
-      - name: Create pull request to update COVIDcast
+          npm install https://github.com/cmu-delphi/www-covidcast-classic/releases/download/${{ needs.create_release.outputs.tag_name }}/www-covidcast-${{ needs.create_release.outputs.version }}.tgz
+      - name: Create pull request to update COVIDcast Classic
         uses: peter-evans/create-pull-request@v3
         with:
           token: ${{ secrets.CMU_DELPHI_DEPLOY_MACHINE_PAT }}
           branch: bot/update-covidcast
-          commit-message: 'feat: update to COVIDcast ${{ needs.create_release.outputs.tag_name }}'
-          title: 'update to COVIDcast ${{ needs.create_release.outputs.tag_name }}'
+          commit-message: 'feat: update to COVIDcast Classic ${{ needs.create_release.outputs.tag_name }}'
+          title: 'update to COVIDcast Classic ${{ needs.create_release.outputs.tag_name }}'
           labels: feat
           reviewers: krivard,sgratzl
           assignees: sgratzl
           body: |
-            update to [COVIDcast ${{ needs.create_release.outputs.tag_name }}](https://github.com/cmu-delphi/www-covidcast/releases/${{ needs.create_release.outputs.tag_name }})
+            update to [COVIDcast Classic ${{ needs.create_release.outputs.tag_name }}](https://github.com/cmu-delphi/www-covidcast-classic/releases/${{ needs.create_release.outputs.tag_name }})
 
   sync_dev:
     needs: correct_repository

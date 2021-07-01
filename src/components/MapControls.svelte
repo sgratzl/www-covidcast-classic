@@ -117,13 +117,13 @@
   }
 
   .choropleth > :global(svg) {
-    background-image: url('../../../assets/imgs/choropleth_small.png');
+    background-image: url('../assets/imgs/choropleth_small.png');
   }
   .bubble > :global(svg) {
-    background-image: url('../../../assets/imgs/bubble_small.png');
+    background-image: url('../assets/imgs/bubble_small.png');
   }
   .spike > :global(svg) {
-    background-image: url('../../../assets/imgs/spike_small.png');
+    background-image: url('../assets/imgs/spike_small.png');
   }
 
   .loader {

@@ -15,9 +15,6 @@ const isLocalOnlyMode = process.argv.includes('--localOnly');
 const DOC_URL =
   process.env.COVIDCAST_SIGNAL_DOC || 'https://docs.google.com/document/d/1llv6xh8jMlmVv7WpyDSv4VgUpFAZQ6QjFUeRxxOinmk';
 
-const SURVEY_DOC_URL =
-  process.env.COVIDCAST_SURVEY_DOC || 'https://docs.google.com/document/d/1J36nedP6eufeRE3TbyT_BK-ofE5d18kLif2UmORkYDU';
-
 async function loadDoc(url) {
   /**
    * download as plain text
@@ -88,9 +85,6 @@ function parseObject(obj, processors = {}) {
   return r;
 }
 
-function parseMarkdown(value) {
-  return marked.parse(value.trim());
-}
 function parseMarkdownInline(value) {
   return marked.parseInline(value.trim());
 }
@@ -99,9 +93,6 @@ function parseNestedOrString(value, _key, processors) {
     return value;
   }
   return parseObject(value, processors);
-}
-function parseArray(value, _key, processors) {
-  return value.map((v) => parseObject(v, processors));
 }
 
 function convertDescriptions(code) {
@@ -122,36 +113,6 @@ function generateDescriptions() {
   return handleFile(DOC_URL, './src/stores/descriptions.raw.txt', convertDescriptions);
 }
 
-function convertSurveyDescriptions(code) {
-  const parsed = {
-    overview: '',
-    questions: [],
-  };
-
-  const [overview, ...rest] = yaml.loadAll(code);
-
-  function parseDoc(doc) {
-    return parseObject(doc, {
-      overview: parseMarkdown,
-      description: parseMarkdownInline,
-      question: parseMarkdownInline,
-      oldRevisions: parseArray,
-      change: parseMarkdownInline,
-      links: (v) => v.map((d) => parseMarkdownInline(d)),
-    });
-  }
-  Object.assign(parsed, parseDoc(overview));
-  for (const doc of rest) {
-    parsed.questions.push(parseDoc(doc));
-  }
-  fs.writeFileSync('./src/stores/questions.generated.json', JSON.stringify(parsed, null, 2));
-}
-
-function generateSurveyDescriptions() {
-  return handleFile(SURVEY_DOC_URL, './src/stores/questions.raw.txt', convertSurveyDescriptions);
-}
-
 if (require.main === module) {
   generateDescriptions();
-  generateSurveyDescriptions();
 }

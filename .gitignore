@@ -7,11 +7,7 @@
 *.zip
 .eslintcache
 src/**/*.generated.json
-/cypress/videos
-/cypress/screenshots
+/public
 *.log
-__diff_output__
 *.tgz
-/public/*.js
 *.map
-/public/*.css

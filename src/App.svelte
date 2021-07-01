@@ -317,7 +317,7 @@
     background-size: contain;
     background-position: center;
     background-repeat: no-repeat;
-    background-image: url('../../assets/imgs/choropleth_small.png');
+    background-image: url('./assets/imgs/choropleth_small.png');
   }
 
   .chart-button {
