@@ -78,7 +78,6 @@ export interface Sensor {
   readonly rawSensor?: Sensor; // raw signal in case of a 7day average
 
   readonly name: string; // signal name
-  readonly unit: string;
   readonly type: 'public' | 'early' | 'late';
   readonly levels: readonly RegionLevel[];
   readonly description?: string; // HTML long text description
@@ -86,13 +85,10 @@ export interface Sensor {
   readonly colorScale: (this: void, v: number) => string;
 
   readonly links: readonly string[]; // more information links
-  readonly credits?: string; // credit text
 
   readonly format: 'raw' | 'per100k' | 'percent' | 'fraction';
-  readonly xAxis: string; // x axis title
   readonly yAxis: string; // y axis value unit long
   readonly highValuesAre: 'good' | 'bad' | 'neutral';
-  readonly is7DayAverage: boolean;
   readonly hasStdErr: boolean;
   formatValue(v: number, enforceSign?: boolean): string;
 
@@ -139,12 +135,6 @@ export function ensureSensorStructure(
     per100k: 'per 100,000 people',
     fraction: 'Fraction of population',
   };
-  const unit = {
-    raw: 'arbitrary scale',
-    percent: 'per 100 people',
-    per100k: 'per 100,000 people',
-    fraction: 'Fraction of population',
-  };
   const rawSignal = sensor.rawSignal === 'null' || sensor.rawSignal === sensor.signal ? null : sensor.rawSignal;
 
   const guessHelper = sensor.tooltipText || sensor.mapTitleText;
@@ -164,9 +154,7 @@ export function ensureSensorStructure(
     format,
     xAxis: 'Date',
     yAxis: yAxis[format] || yAxis.raw,
-    unit: unit[format] || unit.raw,
     highValuesAre,
-    is7DayAverage: false,
     hasStdErr: false,
     formatValue: formatter[format] || formatter.raw,
 
@@ -184,7 +172,6 @@ export function ensureSensorStructure(
         name: `${full.name.replace('(7-day average)', '')} (Raw)`,
         description: full.description.replace('(7-day average)', ''),
         signal: rawSignal,
-        is7DayAverage: false,
         rawSensor: null,
         rawSignal: null,
       },
@@ -335,16 +322,12 @@ export function extendSensorEntry(
       signal,
       type: full.type,
       levels: full.levels,
-      xAxis: full.xAxis,
       format: ratio ? 'per100k' : 'raw',
-      unit: ratio ? 'per 100,000 people' : 'people',
       highValuesAre: 'bad',
-      is7DayAverage: true,
       hasStdErr: full.hasStdErr,
       signalTooltip: casesOrDeath.mapTitleText(options),
       description: full.description,
       links: full.links,
-      credits: full.credits,
     });
   };
   add(false, false);

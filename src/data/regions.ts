@@ -6,7 +6,6 @@ import hrrRaw from './processed/hrr.csv.js';
 import hhsRaw from './processed/hhs.csv.js';
 
 export type RegionLevel = 'state' | 'county' | 'msa' | 'hrr' | 'nation' | 'mega-county' | 'hhs';
-export type RegionArea = 'West' | 'Midwest' | 'Northeast' | 'South';
 
 export interface RegionInfo {
   readonly name: string;
@@ -18,12 +17,10 @@ export interface RegionInfo {
 }
 
 export interface StateInfo extends RegionInfo {
-  region: RegionArea;
   postal: string;
 }
 
 export interface CountyInfo extends RegionInfo {
-  region: RegionArea;
   state: string;
 }
 
@@ -68,19 +65,6 @@ stateInfo.forEach((state) => {
   stateLookup.set(state.propertyId.toLowerCase(), state);
 });
 
-const stateClasses = {
-  West: ['WY', 'ID', 'MT', 'UT', 'AK', 'NM', 'CO', 'NV', 'AZ', 'OR', 'WA', 'CA', 'HI'],
-  Midwest: ['SD', 'ND', 'IA', 'NE', 'MO', 'WI', 'KS', 'MN', 'IL', 'OH', 'MI', 'IN'],
-  Northeast: ['PA', 'ME', 'NH', 'NJ', 'NY', 'VT', 'MA', 'RI', 'CT', 'DE'],
-  South: ['OK', 'TN', 'AL', 'WV', 'AR', 'KY', 'TX', 'GA', 'SC', 'NC', 'LA', 'FL', 'VA', 'MD', 'DC', 'PR', 'MS'],
-};
-
-Object.entries(stateClasses).forEach(([key, value]) => {
-  for (const v of value) {
-    Object.assign(stateLookup.get(v.toLowerCase())!, { region: key });
-  }
-});
-
 export const nationInfo: RegionInfo = {
   level: 'nation',
   name: 'US',
@@ -100,7 +84,6 @@ export const countyInfo = parseCSV(
     const state = stateLookup.get(county.id.slice(0, 2))!;
     Object.assign(county, {
       state: state.postal,
-      region: state.region,
     });
   },
 );
@@ -127,7 +110,6 @@ export const megaCountyInfo: CountyInfo[] = stateInfo.map((info) => ({
   displayName: `Rest of ${info.displayName}`,
   population: undefined,
   level: levelMegaCountyId,
-  region: info.region,
   state: info.id,
   lat: null,
   long: null,
