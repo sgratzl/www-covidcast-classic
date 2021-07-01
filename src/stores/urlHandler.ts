@@ -15,9 +15,9 @@ export function updateURIParameters(state: TrackedState): void {
       params.delete(key);
     }
   });
-  const path = `${((window as unknown) as { DELPHI_COVIDCAST_PAGE: string }).DELPHI_COVIDCAST_PAGE || '/'}${
-    state.path
-  }`;
+  const path = `${
+    (window as unknown as { DELPHI_COVIDCAST_CLASSIC_PAGE: string }).DELPHI_COVIDCAST_CLASSIC_PAGE || '/'
+  }${state.path}`;
   const query = params.toString();
   const url = `${path}${query.length > 0 ? '?' : ''}${query}${window.location.hash}`;
 
@@ -54,7 +54,7 @@ export function updateHash(hash = ''): void {
 trackedUrlParams.subscribe(throttle(updateURIParameters, 250));
 
 window.addEventListener('popstate', (e) => {
-  if (e.state && (e.state as PersistedState).mode) {
+  if (e.state && (e.state as PersistedState).date) {
     loadFromUrlState(e.state);
   }
 });

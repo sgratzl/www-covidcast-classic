@@ -6,12 +6,9 @@ import {
   yesterdayDate,
   levels,
   DEFAULT_LEVEL,
-  DEFAULT_MODE,
   DEFAULT_SENSOR,
-  DEFAULT_SURVEY_SENSOR,
   DEFAULT_ENCODING,
   defaultRegionOnStartup,
-  DEFAULT_CORRELATION_SENSOR,
   CasesOrDeathOptions,
   SensorEntry,
 } from './constants';

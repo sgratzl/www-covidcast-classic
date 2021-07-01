@@ -7,6 +7,7 @@ import sveltePreprocess from 'svelte-preprocess';
 import typescript from '@rollup/plugin-typescript';
 import replace from '@rollup/plugin-replace';
 import scss from 'rollup-plugin-scss';
+import json from '@rollup/plugin-json';
 import pkg from './package.json';
 
 const production = !process.env.ROLLUP_WATCH;
@@ -34,7 +35,7 @@ function serve() {
 
 export default [
   {
-    input: 'src/main.ts',
+    input: 'src/index.js',
     output: {
       sourcemap: true,
       format: 'iife',
@@ -63,6 +64,7 @@ export default [
           dev: !production,
         },
       }),
+      json(),
       // we'll extract any component CSS out into
       // a separate file - better for performance
       scss({ output: 'public/bundle.css' }),
@@ -99,7 +101,7 @@ export default [
     },
   },
   {
-    input: 'src/wrapper/wrapper.js',
+    input: 'src/wrapper/index.js',
     output: {
       sourcemap: true,
       format: 'iife',

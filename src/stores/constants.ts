@@ -1,7 +1,6 @@
 import { isCasesSignal, isDeathSignal, isPropSignal, isCountSignal } from '../data/signals';
 import { formatAPITime } from '../data/utils';
 import descriptions from './descriptions.generated.json';
-import { modeByID } from '../modes';
 import { formatRawValue, formatValue, formatPercentage } from '../formats';
 import { interpolateBuPu, interpolateYlGnBu, interpolateYlOrRd } from 'd3-scale-chromatic';
 import { getDataSource } from './dataSourceLookup';
@@ -432,35 +431,8 @@ export const defaultRegionOnStartup = {
 export const yesterdayDate = new Date(new Date().getTime() - 86400 * 1000);
 export const yesterday = Number.parseInt(formatAPITime(yesterdayDate), 10);
 
-export const DEFAULT_MODE = modeByID.landing;
 export const DEFAULT_SENSOR = (sensorList.find((d) => d.highlight && d.highlight.includes('default')) || sensorList[0])
   .key;
 
-/**
- * default sensor in case the initial mode is survey-results
- */
-
-export const DEFAULT_SURVEY_SENSOR = (() => {
-  const highlightBased = sensorList.find((d) => d.highlight && d.highlight.includes('survey'));
-  if (highlightBased) {
-    return highlightBased.key;
-  }
-  const cli = sensorList.find((d) => d.id === 'fb-survey' && d.signal.includes('cli'));
-  if (cli) {
-    return cli.key;
-  }
-  return DEFAULT_SENSOR;
-})();
-export const DEFAULT_CORRELATION_SENSOR = (() => {
-  const highlightBased = sensorList.find((d) => d.highlight && d.highlight.includes('correlation'));
-  if (highlightBased) {
-    return highlightBased.key;
-  }
-  const cases = sensorList.find((d) => d.isCasesOrDeath);
-  if (cases) {
-    return cases.key;
-  }
-  return DEFAULT_SURVEY_SENSOR;
-})();
 export const DEFAULT_LEVEL = 'county' as RegionLevel;
 export const DEFAULT_ENCODING = 'color' as 'color' | 'spike' | 'bubble';
