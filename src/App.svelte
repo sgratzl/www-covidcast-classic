@@ -8,7 +8,8 @@
   import MapContainer from './components/MapContainer.svelte';
   import Options from './components/Options.svelte';
   import {
-     appReady, sensorList,
+    appReady,
+    sensorList,
     levelList,
     currentRegionInfo,
     currentLevel,

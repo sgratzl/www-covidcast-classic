@@ -1,10 +1,7 @@
 <script>
   /*global UIkit*/
   import { onMount } from 'svelte';
-  import {
-    signalCasesOrDeathOptions,
-    currentInfoSensor,
-  } from '../stores';
+  import { signalCasesOrDeathOptions, currentInfoSensor } from '../stores';
 
   let dialog;
   onMount(() => {

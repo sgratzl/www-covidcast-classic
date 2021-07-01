@@ -55,7 +55,7 @@ function deriveFromPath(url: Location) {
   const urlParams = new URLSearchParams(queryString);
 
   const sensor = urlParams.get('sensor');
-  const level = (urlParams.get('level') as unknown) as RegionLevel;
+  const level = urlParams.get('level') as unknown as RegionLevel;
   const encoding = urlParams.get('encoding');
   const date = urlParams.get('date') ?? '';
 
@@ -64,10 +64,7 @@ function deriveFromPath(url: Location) {
     .map((d) => getInfoByName(d))
     .filter((d): d is RegionInfo => d != null);
 
-  const resolveSensor =
-    sensor && sensorMap.has(sensor)
-      ? sensor
-      : DEFAULT_SENSOR;
+  const resolveSensor = sensor && sensorMap.has(sensor) ? sensor : DEFAULT_SENSOR;
   return {
     sensor: resolveSensor,
     level: levels.includes(level) ? level : DEFAULT_LEVEL,
@@ -253,7 +250,7 @@ currentSensorEntry.subscribe((sensorEntry) => {
 
 const isMobileQuery = window.matchMedia
   ? window.matchMedia('only screen and (max-width: 767px)')
-  : (({ matches: false, addEventListener: () => undefined } as unknown) as MediaQueryList);
+  : ({ matches: false, addEventListener: () => undefined } as unknown as MediaQueryList);
 export const isMobileDevice = readable(isMobileQuery.matches, (set) => {
   if (typeof isMobileQuery.addEventListener === 'function') {
     isMobileQuery.addEventListener('change', (evt) => {
@@ -359,21 +356,17 @@ export const trackedUrlParams = derived(
     encoding,
     currentCompareSelection,
   ],
-  ([sensor,level, region, date, signalOptions, encoding, compare]): TrackedState => {
+  ([sensor, level, region, date, signalOptions, encoding, compare]): TrackedState => {
     const sensorEntry = sensorMap.get(sensor);
 
     // determine parameters based on default value and current mode
     const params: Omit<PersistedState, 'mode'> = {
-      sensor:
-        sensor === DEFAULT_SENSOR
-          ? null
-          : sensor,
+      sensor: sensor === DEFAULT_SENSOR ? null : sensor,
       level: level === DEFAULT_LEVEL ? null : level,
       region,
-      date:
-        String(date),
+      date: String(date),
       signalC: !sensorEntry || !sensorEntry.isCasesOrDeath ? null : signalOptions.cumulative,
-      signalI:  !sensorEntry || !sensorEntry.isCasesOrDeath ? null : signalOptions.incidence,
+      signalI: !sensorEntry || !sensorEntry.isCasesOrDeath ? null : signalOptions.incidence,
       encoding: encoding === DEFAULT_ENCODING ? null : encoding,
       compare: !compare ? null : compare.map((d) => d.info.propertyId).join(','),
     };

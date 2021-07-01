@@ -6,7 +6,6 @@ import './global.css';
 import './customIcons';
 import App from './App.svelte';
 
-
 const hostElement = document.querySelector('#covidcast-classic') || document.body;
 
 const app = new App({
