@@ -4,7 +4,6 @@ import {
   currentRegion,
   currentDate,
   encoding,
-  currentMode,
   signalCasesOrDeathOptions,
   currentCompareSelection,
   appReady,
@@ -74,12 +73,6 @@ appReady.subscribe((v) => {
       return;
     }
     trackEvent('encoding', 'set', encoding);
-  });
-  currentMode.subscribe((mode) => {
-    if (initialRun) {
-      return;
-    }
-    trackEvent('mode', 'set', mode.id);
   });
   signalCasesOrDeathOptions.subscribe((r) => {
     if (initialRun) {

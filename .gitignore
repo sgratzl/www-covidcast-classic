@@ -6,10 +6,12 @@
 
 *.zip
 .eslintcache
-/public
 src/**/*.generated.json
 /cypress/videos
 /cypress/screenshots
 *.log
 __diff_output__
 *.tgz
+/public/*.js
+*.map
+/public/*.css
