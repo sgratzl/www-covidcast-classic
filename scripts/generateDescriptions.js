@@ -13,7 +13,7 @@ const isLocalOnlyMode = process.argv.includes('--localOnly');
 
 // has to be publicly viewable
 const DOC_URL =
-  process.env.COVIDCAST_SIGNAL_DOC || 'https://docs.google.com/document/d/1llv6xh8jMlmVv7WpyDSv4VgUpFAZQ6QjFUeRxxOinmk';
+  process.env.COVIDCAST_SIGNAL_DOC || 'https://docs.google.com/document/d/1MWBIjpURru2onDc3_IT_9JQDvdE3KoB9uCFsaW483rA';
 
 async function loadDoc(url) {
   /**
