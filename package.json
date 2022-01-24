@@ -90,7 +90,7 @@
     "mapbox-gl": "^1.13.0",
     "marked": "^4.0.10",
     "mini-css-extract-plugin": "^2.0.0",
-    "node-fetch": "^2.6.1",
+    "node-fetch": "^2.6.7",
     "prettier": "^2.3.2",
     "prettier-plugin-svelte": "^2.3.1",
     "raw-loader": "^4.0.2",
