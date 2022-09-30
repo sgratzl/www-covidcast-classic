@@ -102,7 +102,7 @@
     "svelte": "^3.49.0",
     "svelte-check": "^2.2.0",
     "svelte-icons": "^2.1.0",
-    "svelte-jester": "^1.7.0",
+    "svelte-jester": "^2.3.0",
     "svelte-loader": "^3.1.2",
     "svelte-preprocess": "^4.7.3",
     "topojson-client": "^3.1.0",
