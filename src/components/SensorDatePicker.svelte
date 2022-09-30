@@ -37,9 +37,9 @@
       end={startEndDates[1]}
       formattedSelected={formatTime(value)}
     >
-      <button aria-label="selected date" class="uk-input uk-text-nowrap" on:>{formatTime(value)}</button>
+      <button aria-label="selected date" class="uk-input uk-text-nowrap" on:click>{formatTime(value)}</button>
     </Datepicker>
-  {:else}<button aria-label="selected date" class="uk-input" on:>{formatTime(value)}</button>{/if}
+  {:else}<button aria-label="selected date" class="uk-input" on:click>{formatTime(value)}</button>{/if}
 </div>
 <div class="uk-button-group shortcuts">
   <button
